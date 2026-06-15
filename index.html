@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0F1115">
+<title>Mesada Família</title>
+<style>
+  :root {
+    --bg: #0F1115;
+    --bg-card: #1A1D24;
+    --bg-card-2: #20242D;
+    --primary: #00C896;
+    --primary-dark: #00A87E;
+    --danger: #FF5C5C;
+    --warning: #FFB020;
+    --text: #F2F4F7;
+    --text-muted: #8A93A6;
+    --border: #2A2F3A;
+    --radius: 14px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Roboto, -apple-system, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 70px;
+  }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .app-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .app-header .user-info {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .app-header .logout-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    font-size: 12px;
+    margin-top: 4px;
+    cursor: pointer;
+  }
+
+  /* ===== MAIN ===== */
+  main {
+    flex: 1;
+    padding: 16px;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .screen { display: none; animation: fadein .25s ease; }
+  .screen.active { display: block; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px);} to {opacity: 1; transform: translateY(0);} }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .card h2, .card h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .card-sub {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  /* ===== SALDO DESTAQUE ===== */
+  .saldo-card {
+    background: linear-gradient(135deg, #102A24, #16201B);
+    border: 1px solid #1E3D33;
+    text-align: center;
+    padding: 28px 18px;
+  }
+  .saldo-label {
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .saldo-valor {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -1px;
+  }
+
+  /* ===== FORM ELEMENTS ===== */
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+  label:first-of-type { margin-top: 0; }
+  input, select, textarea {
+    width: 100%;
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .radio-group { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .radio-option {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+  .radio-option input { width: auto; margin: 0; }
+  .radio-option.active { border-color: var(--primary); }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 18px;
+    transition: transform .1s ease, opacity .2s ease;
+    text-align: center;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--primary); color: #0A1410; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-danger { background: var(--danger); color: #2B0606; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-secondary { background: var(--bg-card-2); color: var(--text); border: 1px solid var(--border); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-sm { padding: 10px; font-size: 13px; margin-top: 8px; }
+  .btn-row { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-row .btn { margin-top: 0; flex: 1; }
+
+  /* ===== EXTRATO ===== */
+  .filtros-periodo {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .filtro-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+  }
+  .filtro-btn.active {
+    background: var(--primary);
+    color: #0A1410;
+    border-color: var(--primary);
+  }
+
+  .dia-grupo { margin-bottom: 16px; }
+  .dia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 4px 4px 8px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .dia-header .fechamento {
+    color: var(--text);
+    font-weight: 700;
+    text-transform: none;
+    font-size: 13px;
+  }
+
+  .lancamento-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+  }
+  .lancamento-item:last-child { border-bottom: none; }
+  .lanc-info { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .lanc-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .icon-deposito { background: #102A24; color: var(--primary); }
+  .icon-juros { background: #2A2410; color: var(--warning); }
+  .icon-saque { background: #2A1414; color: var(--danger); }
+
+  .lanc-texto { min-width: 0; }
+  .lanc-desc {
+    font-size: 14px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  .lanc-meta { font-size: 11px; color: var(--text-muted); }
+  .lanc-valor { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .valor-positivo { color: var(--primary); }
+  .valor-negativo { color: var(--danger); }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* ===== LOGIN ===== */
+  .login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .login-box { width: 100%; max-width: 380px; }
+  .login-logo {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .login-logo .emoji { font-size: 48px; }
+  .login-logo h1 { font-size: 22px; margin-top: 8px; }
+  .login-logo p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+
+  .erro-msg {
+    background: #2A1414;
+    border: 1px solid #4A2424;
+    color: var(--danger);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-top: 14px;
+    display: none;
+  }
+  .erro-msg.show { display: block; }
+
+  /* ===== TOAST ===== */
+  #toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+    max-width: 90%;
+    text-align: center;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.sucesso { border-color: var(--primary); color: var(--primary); }
+  #toast.erro { border-color: var(--danger); color: var(--danger); }
+
+  /* ===== LOADING OVERLAY ===== */
+  #loadingOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,17,21,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+    gap: 14px;
+  }
+  #loadingOverlay.show { display: flex; }
+  .spinner {
+    width: 38px; height: 38px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loadingOverlay span { color: var(--text-muted); font-size: 13px; }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 4px;
+    z-index: 100;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 6px 2px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+  }
+  .nav-item .nav-icon { font-size: 20px; }
+  .nav-item.active { color: var(--primary); }
+
+  /* ===== LISTAS DE USUÁRIOS ===== */
+  .usuario-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .usuario-row:last-child { border-bottom: none; }
+  .usuario-row .info { display: flex; flex-direction: column; }
+  .usuario-row .nome { font-weight: 600; font-size: 14px; }
+  .usuario-row .perfil-badge {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .usuario-row .acoes { display: flex; gap: 8px; }
+  .icon-btn {
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .icon-btn.danger { color: var(--danger); border-color: #4A2424; }
+
+  /* ===== MODAL ===== */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 500;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal-box {
+    background: var(--bg-card);
+    border-radius: 18px 18px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-top: 1px solid var(--border);
+    animation: slideup .25s ease;
+  }
+  @keyframes slideup { from { transform: translateY(40px); opacity:0;} to { transform: translateY(0); opacity:1;} }
+  .modal-box h3 { margin-bottom: 16px; }
+
+  /* ===== UTIL ===== */
+  .text-center { text-align: center; }
+  .mt-0 { margin-top: 0; }
+  .hidden { display: none !important; }
+  .file-input-label {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .info-box {
+    background: var(--bg-card-2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: 10px;
+  }
+
+  @media (min-width: 480px) {
+    main { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOADING OVERLAY ===================== -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <span id="loadingText">Carregando dados...</span>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div id="toast"></div>
+
+<!-- ===================== TELA DE LOGIN ===================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="emoji">🐷</div>
+      <h1>Mesada Família</h1>
+      <p>Sua conta corrente pessoal</p>
+    </div>
+    <div class="card">
+      <label>Usuário</label>
+      <input type="text" id="loginUsuario" placeholder="Digite seu usuário" autocomplete="username">
+      <label>Senha</label>
+      <input type="password" id="loginSenha" placeholder="Digite sua senha" autocomplete="current-password">
+      <div class="erro-msg" id="loginErro"></div>
+      <button class="btn btn-primary" onclick="fazerLogin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== APP (PÓS-LOGIN) ===================== -->
+<div id="appContainer" class="hidden">
+
+  <header class="app-header">
+    <h1>🐷 Mesada</h1>
+    <div class="user-info">
+      <div id="headerUsuario">Usuário</div>
+      <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ TELA SALDO ============ -->
+    <section id="screenSaldo" class="screen active">
+      <div class="card saldo-card">
+        <div class="saldo-label">Saldo disponível</div>
+        <div class="saldo-valor" id="saldoValor">R$ 0,00</div>
+      </div>
+
+      <div class="card">
+        <h2>Extrato</h2>
+        <div class="filtros-periodo">
+          <button class="filtro-btn active" data-dias="30" onclick="mudarFiltroPeriodo(30)">30 dias</button>
+          <button class="filtro-btn" data-dias="60" onclick="mudarFiltroPeriodo(60)">60 dias</button>
+          <button class="filtro-btn" data-dias="90" onclick="mudarFiltroPeriodo(90)">90 dias</button>
+        </div>
+        <div id="extratoContainer">
+          <div class="empty-state">Carregando extrato...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TELA SAQUE ============ -->
+    <section id="screenSaque" class="screen">
+      <div class="card">
+        <h2>Registrar Saque</h2>
+        <p class="card-sub">O valor será descontado imediatamente do saldo disponível.</p>
+
+        <label>Valor do saque (R$)</label>
+        <input type="number" id="saqueValor" placeholder="0,00" min="0.01" step="0.01" inputmode="decimal">
+
+        <label>Comentário / Justificativa</label>
+        <textarea id="saqueComentario" placeholder="Ex: Compra de lanche, brinquedo, etc."></textarea>
+
+        <div class="erro-msg" id="saqueErro"></div>
+
+        <button class="btn btn-danger" onclick="registrarSaque()">Confirmar Saque</button>
+      </div>
+
+      <div class="card">
+        <h2>Histórico de Saques</h2>
+        <div id="historicoSaquesContainer">
+          <div class="empty-state">Carregando...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TELA MESADA (ADMIN) ============ -->
+    <section id="screenMesada" class="screen">
+      <div class="card">
+        <h2>Definições da Mesada</h2>
+        <p class="card-sub">Configure o valor e a recorrência do depósito automático.</p>
+
+        <label>Valor do depósito recorrente (R$)</label>
+        <input type="number" id="cfgValorMesada" min="0" step="0.01" inputmode="decimal">
+
+        <label>Tipo de recorrência</label>
+        <div class="radio-group">
+          <label class="radio-option" id="optSemanal">
+            <input type="radio" name="tipoRecorrencia" value="semanal" onchange="atualizarUiRecorrencia()">
+            <span>Semanal (dia da semana)</span>
+          </label>
+          <label class="radio-option" id="optMensal">
+            <input type="radio" name="tipoRecorrencia" value="mensal" onchange="atualizarUiRecorrencia()">
+            <span>Mensal (dia do mês)</span>
+          </label>
+        </div>
+
+        <div id="grupoDiaSemana">
+          <label>Dia da semana</label>
+          <select id="cfgDiaSemana">
+            <option value="0">Domingo</option>
+            <option value="1">Segunda-feira</option>
+            <option value="2">Terça-feira</option>
+            <option value="3">Quarta-feira</option>
+            <option value="4">Quinta-feira</option>
+            <option value="5">Sexta-feira</option>
+            <option value="6">Sábado</option>
+          </select>
+        </div>
+
+        <div id="grupoDiaMes" class="hidden">
+          <label>Dia do mês</label>
+          <select id="cfgDiaMes"></select>
+        </div>
+
+        <div class="info-box">
+          Último fechamento processado: <strong id="infoUltimoFechamento">—</strong>
+        </div>
+
+        <button class="btn btn-primary" onclick="salvarConfigMesada()">Salvar Definições</button>
+      </div>
+
+      <div class="card">
+        <h2>Aporte Individual</h2>
+        <p class="card-sub">Depósito manual avulso (ex: presente, bônus).</p>
+
+        <label>Valor do aporte (R$)</label>
+        <input type="number" id="aporteValor" min="0.01" step="0.01" inputmode="decimal">
+
+        <label>Descrição</label>
+        <input type="text" id="aporteDescricao" placeholder="Ex: Presente de aniversário" value="Aporte individual">
+
+        <button class="btn btn-primary" onclick="realizarAporte()">Realizar Aporte</button>
+      </div>
+    </section>
+
+    <!-- ============ TELA CONFIGURAÇÕES (ADMIN) ============ -->
+    <section id="screenConfig" class="screen">
+      <div class="card">
+        <h2>Juros</h2>
+        <p class="card-sub">
+          O juro é calculado sobre o saldo existente no momento do
+          fechamento de cada ciclo de depósito recorrente, e aplicado
+          automaticamente antes do depósito da mesada.
+        </p>
+        <label>Taxa de juros (%)</label>
+        <input type="number" id="cfgTaxaJuros" min="0" step="0.01" inputmode="decimal">
+        <button class="btn btn-primary" onclick="salvarConfigJuros()">Salvar Taxa</button>
+      </div>
+
+      <div class="card">
+        <h2>Gerenciar Usuários</h2>
+        <p class="card-sub">Crie, edite ou remova usuários do sistema.</p>
+        <div id="listaUsuarios">
+          <div class="empty-state">Carregando usuários...</div>
+        </div>
+        <button class="btn btn-secondary" onclick="abrirModalUsuario(null)">+ Novo Usuário</button>
+      </div>
+
+      <div class="card">
+        <h2>Backup e Portabilidade</h2>
+        <p class="card-sub">Exporte ou importe todos os dados da aplicação em formato JSON.</p>
+        <button class="btn btn-outline" onclick="exportarDados()">⬇ Exportar Dados (JSON)</button>
+
+        <label class="file-input-label" for="inputImportar">
+          ⬆ Selecionar arquivo JSON para importar
+        </label>
+        <input type="file" id="inputImportar" accept="application/json" class="hidden" onchange="importarDados(event)">
+
+        <div class="info-box">
+          ⚠️ A importação <strong>sobrescreve</strong> os dados atuais da planilha. Faça um backup antes de importar.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== BOTTOM NAV ===================== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-screen="screenSaldo" onclick="irPara('screenSaldo')">
+      <span class="nav-icon">💰</span>
+      <span>Saldo</span>
+    </button>
+    <button class="nav-item" data-screen="screenSaque" onclick="irPara('screenSaque')">
+      <span class="nav-icon">➖</span>
+      <span>Saque</span>
+    </button>
+    <button class="nav-item admin-only" data-screen="screenMesada" onclick="irPara('screenMesada')">
+      <span class="nav-icon">📅</span>
+      <span>Mesada</span>
+    </button>
+    <button class="nav-item admin-only" data-screen="screenConfig" onclick="irPara('screenConfig')">
+      <span class="nav-icon">⚙️</span>
+      <span>Config</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ===================== MODAL USUÁRIO ===================== -->
+<div class="modal-backdrop" id="modalUsuarioBackdrop">
+  <div class="modal-box">
+    <h3 id="modalUsuarioTitulo">Novo Usuário</h3>
+    <input type="hidden" id="modalUsuarioId">
+    <label>Nome de usuário</label>
+    <input type="text" id="modalUsuarioNome" placeholder="Ex: Mariana">
+    <label>Senha</label>
+    <input type="text" id="modalUsuarioSenha" placeholder="Senha">
+    <label>Perfil</label>
+    <select id="modalUsuarioPerfil">
+      <option value="Restrito">Restrito (Saldo e Saque)</option>
+      <option value="Admin">Admin (Acesso total)</option>
+    </select>
+    <div class="erro-msg" id="modalUsuarioErro"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="fecharModalUsuario()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarUsuarioModal()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURAÇÃO DA API
+   ============================================================ */
+// ⚠️ SUBSTITUA pela URL do seu Web App do Google Apps Script (.../exec)
+const API_URL = "https://script.google.com/macros/s/AKfycbwpW0bqhVwXxcASFpJrBmaimB3Q6wbKGoCOxnN-57XSUclrxR7JyoT03aYmNLPdksoQJQ/exec";
+
+/* ============================================================
+   ESTADO GLOBAL
+   ============================================================ */
+let usuarioLogado = null;       // { id, usuario, perfil }
+let dadosApp = null;            // resposta de getDados
+let filtroPeriodoDias = 30;
+let listaUsuariosCache = [];
+
+/* ============================================================
+   UTILITÁRIOS DE UI
+   ============================================================ */
+function showLoading(texto) {
+  document.getElementById('loadingText').textContent = texto || 'Carregando dados...';
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+let toastTimeout;
+function showToast(msg, tipo) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = '';
+  toast.classList.add('show');
+  if (tipo) toast.classList.add(tipo);
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function formatMoeda(valor) {
+  const num = parseFloat(valor) || 0;
+  return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function formatDataCurta(isoStr) {
+  const d = new Date(isoStr);
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function formatDataLabel(isoStr) {
+  const d = new Date(isoStr);
+  const hoje = new Date();
+  const ontem = new Date();
+  ontem.setDate(hoje.getDate() - 1);
+
+  const dStr = d.toDateString();
+  if (dStr === hoje.toDateString()) return 'Hoje';
+  if (dStr === ontem.toDateString()) return 'Ontem';
+
+  return d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+}
+
+/* ============================================================
+   CHAMADAS À API
+   ============================================================ */
+async function apiCall(action, params, metodo) {
+  metodo = metodo || 'POST';
+  try {
+    if (metodo === 'GET') {
+      const query = new URLSearchParams({ action, ...params }).toString();
+      const resp = await fetch(`${API_URL}?${query}`);
+      return await resp.json();
+    } else {
+      const resp = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, ...params })
+      });
+      return await resp.json();
+    }
+  } catch (err) {
+    return { sucesso: false, erro: 'Falha de conexão: ' + err.message };
+  }
+}
+
+/* ============================================================
+   LOGIN / LOGOUT
+   ============================================================ */
+async function fazerLogin() {
+  const usuario = document.getElementById('loginUsuario').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+  const erroEl = document.getElementById('loginErro');
+  erroEl.classList.remove('show');
+
+  if (!usuario || !senha) {
+    erroEl.textContent = 'Preencha usuário e senha.';
+    erroEl.classList.add('show');
+    return;
+  }
+
+  showLoading('Verificando credenciais...');
+  const resp = await apiCall('login', { usuario, senha });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    erroEl.textContent = resp.erro || 'Erro ao fazer login.';
+    erroEl.classList.add('show');
+    return;
+  }
+
+  usuarioLogado = resp.usuario;
+  sessionStorage.setItem('usuarioLogado', JSON.stringify(usuarioLogado));
+  iniciarApp();
+}
+
+function fazerLogout() {
+  usuarioLogado = null;
+  sessionStorage.removeItem('usuarioLogado');
+  document.getElementById('appContainer').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginUsuario').value = '';
+  document.getElementById('loginSenha').value = '';
+}
+
+function checarSessao() {
+  const salvo = sessionStorage.getItem('usuarioLogado');
+  if (salvo) {
+    usuarioLogado = JSON.parse(salvo);
+    iniciarApp();
+  }
+}
+
+/* ============================================================
+   INICIALIZAÇÃO DO APP
+   ============================================================ */
+async function iniciarApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appContainer').classList.remove('hidden');
+  document.getElementById('headerUsuario').textContent =
+    `${usuarioLogado.usuario} (${usuarioLogado.perfil})`;
+
+  aplicarPermissoes();
+  preencherDiasMes();
+  irPara('screenSaldo');
+  await carregarDados();
+}
+
+function aplicarPermissoes() {
+  const isAdmin = usuarioLogado.perfil === 'Admin';
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.style.display = isAdmin ? '' : 'none';
+  });
+}
+
+function preencherDiasMes() {
+  const sel = document.getElementById('cfgDiaMes');
+  if (sel.options.length > 0) return;
+  for (let i = 1; i <= 28; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Dia ${i}`;
+    sel.appendChild(opt);
+  }
+}
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+function irPara(screenId) {
+  // Bloqueia acesso a telas de admin para perfil restrito
+  const adminScreens = ['screenMesada', 'screenConfig'];
+  if (adminScreens.includes(screenId) && usuarioLogado.perfil !== 'Admin') {
+    showToast('Acesso restrito a administradores.', 'erro');
+    screenId = 'screenSaldo';
+  }
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const navBtn = document.querySelector(`.nav-item[data-screen="${screenId}"]`);
+  if (navBtn) navBtn.classList.add('active');
+}
+
+/* ============================================================
+   CARREGAR DADOS PRINCIPAIS
+   ============================================================ */
+async function carregarDados() {
+  showLoading('Carregando dados...');
+  const incluirUsuarios = usuarioLogado.perfil === 'Admin';
+  const resp = await apiCall('getDados', { incluirUsuarios: incluirUsuarios ? 'true' : 'false' }, 'GET');
+  hideLoading();
+
+  if (!resp.sucesso) {
+    showToast(resp.erro || 'Erro ao carregar dados.', 'erro');
+    return;
+  }
+
+  dadosApp = resp;
+  renderSaldo();
+  renderExtrato();
+  renderHistoricoSaques();
+
+  if (usuarioLogado.perfil === 'Admin') {
+    preencherFormConfigMesada();
+    preencherFormJuros();
+    listaUsuariosCache = resp.usuarios || [];
+    renderListaUsuarios();
+  }
+}
+
+/* ============================================================
+   SEÇÃO SALDO / EXTRATO
+   ============================================================ */
+function renderSaldo() {
+  document.getElementById('saldoValor').textContent = formatMoeda(dadosApp.saldoAtual);
+}
+
+function mudarFiltroPeriodo(dias) {
+  filtroPeriodoDias = dias;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.filtro-btn[data-dias="${dias}"]`).classList.add('active');
+  renderExtrato();
+}
+
+function renderExtrato() {
+  const container = document.getElementById('extratoContainer');
+  if (!dadosApp || !dadosApp.lancamentos) {
+    container.innerHTML = '<div class="empty-state">Nenhum dado disponível.</div>';
+    return;
+  }
+
+  const limite = new Date();
+  limite.setDate(limite.getDate() - filtroPeriodoDias);
+
+  const lancamentosFiltrados = dadosApp.lancamentos.filter(l => {
+    return new Date(l.data) >= limite;
+  });
+
+  if (lancamentosFiltrados.length === 0) {
+    container.innerHTML = '<div class="empty-state">Nenhuma movimentação no período selecionado.</div>';
+    return;
+  }
+
+  // Agrupa por dia (data local)
+  const grupos = {};
+  lancamentosFiltrados.forEach(l => {
+    const dataObj = new Date(l.data);
+    const chave = dataObj.toISOString().slice(0, 10);
+    if (!grupos[chave]) grupos[chave] = [];
+    grupos[chave].push(l);
+  });
+
+  const chavesOrdenadas = Object.keys(grupos).sort((a, b) => b.localeCompare(a));
+
+  let html = '';
+  chavesOrdenadas.forEach(chave => {
+    const itens = grupos[chave]; // já vem ordenado desc (mais recente primeiro)
+    const ultimoSaldo = itens[0].saldoApos; // saldo de fechamento do dia (último lançamento)
+
+    html += `<div class="dia-grupo">`;
+    html += `<div class="dia-header">
+               <span>${formatDataLabel(itens[0].data)} · ${formatDataCurta(itens[0].data)}</span>
+               <span class="fechamento">Saldo: ${formatMoeda(ultimoSaldo)}</span>
+             </div>`;
+
+    itens.forEach(l => {
+      html += renderLancamentoItem(l);
+    });
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function renderLancamentoItem(l) {
+  let iconClass = 'icon-deposito';
+  let icon = '⬆';
+  let label = 'Depósito';
+  let valorClass = 'valor-positivo';
+
+  if (l.tipo === 'Juros') {
+    iconClass = 'icon-juros';
+    icon = '✨';
+    label = 'Juros';
+  } else if (l.tipo === 'Saque') {
+    iconClass = 'icon-saque';
+    icon = '⬇';
+    label = 'Saque';
+    valorClass = 'valor-negativo';
+  } else {
+    label = 'Depósito';
+  }
+
+  const valorNum = parseFloat(l.valor);
+  const sinal = valorNum >= 0 ? '+ ' : '- ';
+
+  return `
+    <div class="lancamento-item">
+      <div class="lanc-info">
+        <div class="lanc-icon ${iconClass}">${icon}</div>
+        <div class="lanc-texto">
+          <div class="lanc-desc">${escapeHtml(l.descricao || label)}</div>
+          <div class="lanc-meta">${label}${l.usuario ? ' · ' + escapeHtml(l.usuario) : ''}</div>
+        </div>
+      </div>
+      <div class="lanc-valor ${valorClass}">${sinal}${formatMoeda(Math.abs(valorNum))}</div>
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ============================================================
+   SEÇÃO SAQUE
+   ============================================================ */
+async function registrarSaque() {
+  const valorInput = document.getElementById('saqueValor');
+  const comentarioInput = document.getElementById('saqueComentario');
+  const erroEl = document.getElementById('saqueErro');
+  erroEl.classList.remove('show');
+
+  const valor = parseFloat(valorInput.value);
+  const comentario = comentarioInput.value.trim();
+
+  if (isNaN(valor) || valor <= 0) {
+    erroEl.textContent = 'Informe um valor de saque válido.';
+    erroEl.classList.add('show');
+    return;
+  }
+  if (!comentario) {
+    erroEl.textContent = 'O comentário/justificativa é obrigatório.';
+    erroEl.classList.add('show');
+    return;
+  }
+  if (dadosApp && valor > dadosApp.saldoAtual) {
+    erroEl.textContent = 'Saldo insuficiente para este saque.';
+    erroEl.classList.add('show');
+    return;
+  }
+
+  showLoading('Registrando saque...');
+  const resp = await apiCall('registrarSaque', {
+    valor: valor,
+    comentario: comentario,
+    usuario: usuarioLogado.usuario
+  });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    erroEl.textContent = resp.erro || 'Erro ao registrar saque.';
+    erroEl.classList.add('show');
+    return;
+  }
+
+  valorInput.value = '';
+  comentarioInput.value = '';
+  showToast('Saque realizado com sucesso!', 'sucesso');
+  await carregarDados();
+}
+
+function renderHistoricoSaques() {
+  const container = document.getElementById('historicoSaquesContainer');
+  if (!dadosApp || !dadosApp.lancamentos) {
+    container.innerHTML = '<div class="empty-state">Nenhum dado disponível.</div>';
+    return;
+  }
+
+  const saques = dadosApp.lancamentos.filter(l => l.tipo === 'Saque');
+
+  if (saques.length === 0) {
+    container.innerHTML = '<div class="empty-state">Nenhum saque registrado ainda.</div>';
+    return;
+  }
+
+  let html = '';
+  saques.slice(0, 50).forEach(l => {
+    html += `
+      <div class="lancamento-item">
+        <div class="lanc-info">
+          <div class="lanc-icon icon-saque">⬇</div>
+          <div class="lanc-texto">
+            <div class="lanc-desc">${escapeHtml(l.descricao)}</div>
+            <div class="lanc-meta">${formatDataCurta(l.data)}${l.usuario ? ' · ' + escapeHtml(l.usuario) : ''}</div>
+          </div>
+        </div>
+        <div class="lanc-valor valor-negativo">- ${formatMoeda(Math.abs(parseFloat(l.valor)))}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+/* ============================================================
+   SEÇÃO MESADA (ADMIN)
+   ============================================================ */
+function preencherFormConfigMesada() {
+  const cfg = dadosApp.configuracoes;
+  document.getElementById('cfgValorMesada').value = cfg.valorMesada;
+
+  const radioSemanal = document.querySelector('#optSemanal input');
+  const radioMensal = document.querySelector('#optMensal input');
+
+  if (cfg.tipoRecorrencia === 'mensal') {
+    radioMensal.checked = true;
+  } else {
+    radioSemanal.checked = true;
+  }
+
+  document.getElementById('cfgDiaSemana').value = cfg.diaSemana;
+  document.getElementById('cfgDiaMes').value = cfg.diaMes;
+
+  document.getElementById('infoUltimoFechamento').textContent =
+    cfg.ultimoFechamento ? formatDataCurta(cfg.ultimoFechamento + 'T00:00:00') : 'Ainda não processado';
+
+  atualizarUiRecorrencia();
+}
+
+function atualizarUiRecorrencia() {
+  const tipo = document.querySelector('input[name="tipoRecorrencia"]:checked')?.value || 'semanal';
+  document.getElementById('grupoDiaSemana').classList.toggle('hidden', tipo !== 'semanal');
+  document.getElementById('grupoDiaMes').classList.toggle('hidden', tipo !== 'mensal');
+
+  document.getElementById('optSemanal').classList.toggle('active', tipo === 'semanal');
+  document.getElementById('optMensal').classList.toggle('active', tipo === 'mensal');
+}
+
+async function salvarConfigMesada() {
+  const valorMesada = parseFloat(document.getElementById('cfgValorMesada').value);
+  const tipoRecorrencia = document.querySelector('input[name="tipoRecorrencia"]:checked')?.value || 'semanal';
+  const diaSemana = document.getElementById('cfgDiaSemana').value;
+  const diaMes = document.getElementById('cfgDiaMes').value;
+
+  if (isNaN(valorMesada) || valorMesada < 0) {
+    showToast('Informe um valor de mesada válido.', 'erro');
+    return;
+  }
+
+  showLoading('Salvando definições...');
+  const resp = await apiCall('salvarConfiguracoes', {
+    valorMesada, tipoRecorrencia, diaSemana, diaMes
+  });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    showToast(resp.erro || 'Erro ao salvar.', 'erro');
+    return;
+  }
+
+  showToast('Definições salvas com sucesso!', 'sucesso');
+  await carregarDados();
+  preencherFormConfigMesada();
+}
+
+async function realizarAporte() {
+  const valor = parseFloat(document.getElementById('aporteValor').value);
+  const descricao = document.getElementById('aporteDescricao').value.trim() || 'Aporte individual';
+
+  if (isNaN(valor) || valor <= 0) {
+    showToast('Informe um valor de aporte válido.', 'erro');
+    return;
+  }
+
+  showLoading('Registrando aporte...');
+  const resp = await apiCall('aporteIndividual', {
+    valor, descricao, usuario: usuarioLogado.usuario
+  });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    showToast(resp.erro || 'Erro ao registrar aporte.', 'erro');
+    return;
+  }
+
+  document.getElementById('aporteValor').value = '';
+  showToast('Aporte realizado com sucesso!', 'sucesso');
+  await carregarDados();
+}
+
+/* ============================================================
+   SEÇÃO CONFIGURAÇÕES / JUROS (ADMIN)
+   ============================================================ */
+function preencherFormJuros() {
+  document.getElementById('cfgTaxaJuros').value = dadosApp.configuracoes.taxaJuros;
+}
+
+async function salvarConfigJuros() {
+  const taxaJuros = parseFloat(document.getElementById('cfgTaxaJuros').value);
+
+  if (isNaN(taxaJuros) || taxaJuros < 0) {
+    showToast('Informe uma taxa de juros válida.', 'erro');
+    return;
+  }
+
+  showLoading('Salvando taxa de juros...');
+  const resp = await apiCall('salvarConfiguracoes', { taxaJuros });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    showToast(resp.erro || 'Erro ao salvar.', 'erro');
+    return;
+  }
+
+  showToast('Taxa de juros atualizada!', 'sucesso');
+  await carregarDados();
+}
+
+/* ============================================================
+   GERENCIAMENTO DE USUÁRIOS (ADMIN)
+   ============================================================ */
+function renderListaUsuarios() {
+  const container = document.getElementById('listaUsuarios');
+
+  if (!listaUsuariosCache.length) {
+    container.innerHTML = '<div class="empty-state">Nenhum usuário cadastrado.</div>';
+    return;
+  }
+
+  let html = '';
+  listaUsuariosCache.forEach(u => {
+    html += `
+      <div class="usuario-row">
+        <div class="info">
+          <span class="nome">${escapeHtml(u.usuario)}</span>
+          <span class="perfil-badge">${u.perfil === 'Admin' ? '👑 Administrador' : '🔒 Restrito (Saldo/Saque)'}</span>
+        </div>
+        <div class="acoes">
+          <button class="icon-btn" onclick='abrirModalUsuario(${JSON.stringify(u)})'>✏️</button>
+          <button class="icon-btn danger" onclick="excluirUsuario(${u.id}, '${escapeHtml(u.usuario)}')">🗑️</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function abrirModalUsuario(usuario) {
+  const backdrop = document.getElementById('modalUsuarioBackdrop');
+  const titulo = document.getElementById('modalUsuarioTitulo');
+  const erroEl = document.getElementById('modalUsuarioErro');
+  erroEl.classList.remove('show');
+
+  if (usuario) {
+    titulo.textContent = 'Editar Usuário';
+    document.getElementById('modalUsuarioId').value = usuario.id;
+    document.getElementById('modalUsuarioNome').value = usuario.usuario;
+    document.getElementById('modalUsuarioSenha').value = usuario.senha;
+    document.getElementById('modalUsuarioPerfil').value = usuario.perfil;
+  } else {
+    titulo.textContent = 'Novo Usuário';
+    document.getElementById('modalUsuarioId').value = '';
+    document.getElementById('modalUsuarioNome').value = '';
+    document.getElementById('modalUsuarioSenha').value = '';
+    document.getElementById('modalUsuarioPerfil').value = 'Restrito';
+  }
+
+  backdrop.classList.add('show');
+}
+
+function fecharModalUsuario() {
+  document.getElementById('modalUsuarioBackdrop').classList.remove('show');
+}
+
+async function salvarUsuarioModal() {
+  const id = document.getElementById('modalUsuarioId').value;
+  const nome = document.getElementById('modalUsuarioNome').value.trim();
+  const senha = document.getElementById('modalUsuarioSenha').value;
+  const perfil = document.getElementById('modalUsuarioPerfil').value;
+  const erroEl = document.getElementById('modalUsuarioErro');
+  erroEl.classList.remove('show');
+
+  if (!nome || !senha) {
+    erroEl.textContent = 'Preencha usuário e senha.';
+    erroEl.classList.add('show');
+    return;
+  }
+
+  showLoading('Salvando usuário...');
+  const resp = await apiCall('salvarUsuario', { id, usuario: nome, senha, perfil });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    erroEl.textContent = resp.erro || 'Erro ao salvar usuário.';
+    erroEl.classList.add('show');
+    return;
+  }
+
+  fecharModalUsuario();
+  showToast('Usuário salvo com sucesso!', 'sucesso');
+  await recarregarUsuarios();
+}
+
+async function excluirUsuario(id, nome) {
+  if (!confirm(`Tem certeza que deseja excluir o usuário "${nome}"?`)) return;
+
+  showLoading('Excluindo usuário...');
+  const resp = await apiCall('excluirUsuario', { id });
+  hideLoading();
+
+  if (!resp.sucesso) {
+    showToast(resp.erro || 'Erro ao excluir usuário.', 'erro');
+    return;
+  }
+
+  showToast('Usuário excluído.', 'sucesso');
+  await recarregarUsuarios();
+}
+
+async function recarregarUsuarios() {
+  const resp = await apiCall('listarUsuarios', {}, 'GET');
+  if (resp.sucesso) {
+    listaUsuariosCache = resp.usuarios;
+    renderListaUsuarios();
+  }
+}
+
+/* ============================================================
+   BACKUP / PORTABILIDADE
+   ============================================================ */
+async function exportarDados() {
+  showLoading('Gerando arquivo de backup...');
+  const resp = await apiCall('exportarDados', {}, 'GET');
+  hideLoading();
+
+  if (!resp.sucesso) {
+    showToast(resp.erro || 'Erro ao exportar dados.', 'erro');
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(resp.dados, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dataAtual = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `backup-mesada-${dataAtual}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  showToast('Backup exportado com sucesso!', 'sucesso');
+}
+
+function importarDados(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (!confirm('Importar este arquivo irá SOBRESCREVER todos os dados atuais. Deseja continuar?')) {
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    let json;
+    try {
+      json = JSON.parse(e.target.result);
+    } catch (err) {
+      showToast('Arquivo JSON inválido.', 'erro');
+      event.target.value = '';
+      return;
+    }
+
+    showLoading('Importando dados...');
+    const resp = await apiCall('importarDados', { dados: JSON.stringify(json) });
+    hideLoading();
+    event.target.value = '';
+
+    if (!resp.sucesso) {
+      showToast(resp.erro || 'Erro ao importar dados.', 'erro');
+      return;
+    }
+
+    showToast('Dados importados com sucesso!', 'sucesso');
+    await carregarDados();
+  };
+  reader.readAsText(file);
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  checarSessao();
+
+  document.getElementById('loginSenha').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') fazerLogin();
+  });
+});
+</script>
+
+</body>
+</html>
