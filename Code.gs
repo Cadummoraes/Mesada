@@ -191,8 +191,13 @@ function processarRecorrencias() {
   const valorMesada = parseFloat(config.valorMesada) || 0;
   const taxaJuros = parseFloat(config.taxaJuros) || 0;
   const tipoRecorrencia = config.tipoRecorrencia || 'semanal';
-  const diaSemana = parseInt(config.diaSemana, 10); // 0-6 (Dom-Sab)
-  const diaMes = parseInt(config.diaMes, 10); // 1-28
+
+  // Fallback seguro: evita NaN, que causaria loop infinito em calcularProximaDataFechamento
+  let diaSemana = parseInt(config.diaSemana, 10); // 0-6 (Dom-Sab)
+  if (isNaN(diaSemana) || diaSemana < 0 || diaSemana > 6) diaSemana = 6;
+
+  let diaMes = parseInt(config.diaMes, 10); // 1-28
+  if (isNaN(diaMes) || diaMes < 1 || diaMes > 28) diaMes = 1;
 
   let ultimoFechamento = config.ultimoFechamento
     ? new Date(config.ultimoFechamento + 'T00:00:00')
@@ -237,9 +242,12 @@ function calcularProximaDataFechamento(partir, tipoRecorrencia, diaSemana, diaMe
 
   if (tipoRecorrencia === 'semanal') {
     // Avança dia a dia até encontrar o próximo diaSemana após 'partir'
+    // Limite de 8 iterações: cobre qualquer dia da semana, evita loop infinito
+    let tentativas = 0;
     do {
       d.setDate(d.getDate() + 1);
-    } while (d.getDay() !== diaSemana);
+      tentativas++;
+    } while (d.getDay() !== diaSemana && tentativas < 8);
     return d;
   } else {
     // Mensal: próximo mês no dia 'diaMes'
